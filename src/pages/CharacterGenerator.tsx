@@ -17,21 +17,26 @@ import {
 } from '@/data/generator';
 
 const ALL_LABELS = ['ББ', 'ДБ', 'С', 'В', 'И', 'Пр', 'Р', 'Х', 'Судьба'];
+const ORIGIN_IDS = ['o1', 'o4', 'o2', 'o6', 'o3', 'o5'];
 
 interface RoundState {
   log: number[];
   status: 'idle' | 'rolling' | 'awaiting-choice' | 'done';
   resultLabel?: string;
+  manual: boolean;
 }
 
-const emptyRound = (): RoundState => ({ log: [], status: 'idle' });
+const emptyRound = (): RoundState => ({ log: [], status: 'idle', manual: false });
 
 const CharacterGenerator = () => {
   const [originRolling, setOriginRolling] = useState(false);
   const [originRoll, setOriginRoll] = useState<number | null>(null);
   const [originId, setOriginId] = useState<string | null>(null);
+  const [originManual, setOriginManual] = useState(false);
+  const [originPickerOpen, setOriginPickerOpen] = useState(false);
 
   const [rounds, setRounds] = useState<RoundState[]>([emptyRound(), emptyRound(), emptyRound()]);
+  const [roundPickerOpen, setRoundPickerOpen] = useState<boolean[]>([false, false, false]);
   const [name, setName] = useState('');
   const [saved, setSaved] = useState(false);
 
@@ -42,29 +47,54 @@ const CharacterGenerator = () => {
   }, []);
 
   const origin = originId ? entries.find((e) => e.id === originId) : null;
+  const originOptions = entries.filter((e) => ORIGIN_IDS.includes(e.id));
 
   const rollOrigin = () => {
+    setOriginPickerOpen(false);
     setOriginRolling(true);
     setTimeout(() => {
       const roll = rollD10();
       setOriginRoll(roll);
       setOriginId(getOriginIdByRoll(roll));
+      setOriginManual(false);
       setOriginRolling(false);
     }, 600);
+  };
+
+  const rerollOrigin = () => {
+    setOriginPickerOpen(false);
+    setOriginRolling(true);
+    setTimeout(() => {
+      const roll = rollD10();
+      setOriginRoll(roll);
+      setOriginId(getOriginIdByRoll(roll));
+      setOriginManual(true);
+      setOriginRolling(false);
+    }, 600);
+  };
+
+  const chooseOriginManually = (id: string) => {
+    setOriginId(id);
+    setOriginRoll(null);
+    setOriginManual(true);
+    setOriginPickerOpen(false);
   };
 
   const doneBoostedLabels = new Set(
     rounds.filter((r) => r.status === 'done' && r.resultLabel).map((r) => r.resultLabel as string)
   );
 
-  const rollRound = (idx: number) => {
+  const rollForRound = (idx: number, markManual: boolean) => {
+    setRoundPickerOpen((prev) => prev.map((v, i) => (i === idx ? false : v)));
     setRounds((prev) => {
       const next = [...prev];
-      next[idx] = { log: [], status: 'rolling' };
+      next[idx] = { log: [], status: 'rolling', manual: markManual };
       return next;
     });
 
-    const currentBoosted = new Set(doneBoostedLabels);
+    const otherBoosted = new Set(
+      rounds.filter((r, i) => i !== idx && r.status === 'done' && r.resultLabel).map((r) => r.resultLabel as string)
+    );
 
     setTimeout(() => {
       const log: number[] = [];
@@ -79,7 +109,7 @@ const CharacterGenerator = () => {
           break;
         }
         const label = characteristicModifierTable[roll];
-        if (!currentBoosted.has(label)) {
+        if (!otherBoosted.has(label)) {
           resultLabel = label;
           break;
         }
@@ -87,22 +117,38 @@ const CharacterGenerator = () => {
 
       setRounds((prev) => {
         const next = [...prev];
-        next[idx] = { log, status: awaitingChoice ? 'awaiting-choice' : 'done', resultLabel };
+        next[idx] = { log, status: awaitingChoice ? 'awaiting-choice' : 'done', resultLabel, manual: markManual };
         return next;
       });
     }, 600);
   };
 
-  const chooseFree = (idx: number, label: string) => {
+  const rollRound = (idx: number) => rollForRound(idx, false);
+  const rerollRound = (idx: number) => rollForRound(idx, true);
+
+  const chooseFree = (idx: number, label: string, markManual: boolean) => {
     setRounds((prev) => {
       const next = [...prev];
-      next[idx] = { ...next[idx], status: 'done', resultLabel: label };
+      next[idx] = { ...next[idx], status: 'done', resultLabel: label, manual: markManual || next[idx].manual };
       return next;
     });
+    setRoundPickerOpen((prev) => prev.map((v, i) => (i === idx ? false : v)));
+  };
+
+  const toggleRoundPicker = (idx: number) => {
+    setRoundPickerOpen((prev) => prev.map((v, i) => (i === idx ? !v : v)));
+  };
+
+  const availableLabelsForRound = (idx: number) => {
+    const otherBoosted = new Set(
+      rounds.filter((r, i) => i !== idx && r.status === 'done' && r.resultLabel).map((r) => r.resultLabel as string)
+    );
+    return ALL_LABELS.filter((l) => !otherBoosted.has(l));
   };
 
   const allRoundsDone = rounds.every((r) => r.status === 'done');
-  const xp = (originId ? 1 : 0) + (allRoundsDone ? 1 : 0);
+  const roundsManual = rounds.some((r) => r.manual);
+  const xp = (originId && !originManual ? 1 : 0) + (allRoundsDone && !roundsManual ? 1 : 0);
 
   const finalStats: StatRow[] | null =
     origin && origin.stats
@@ -116,7 +162,10 @@ const CharacterGenerator = () => {
   const reset = () => {
     setOriginRoll(null);
     setOriginId(null);
+    setOriginManual(false);
+    setOriginPickerOpen(false);
     setRounds([emptyRound(), emptyRound(), emptyRound()]);
+    setRoundPickerOpen([false, false, false]);
     setName('');
     setSaved(false);
   };
@@ -156,7 +205,8 @@ const CharacterGenerator = () => {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl font-body text-lg text-parchment/85">
             Бросьте кости, чтобы определить своё происхождение и сильные стороны героя.
-            За каждый бросок судьбы вы получаете 1 очко опыта.
+            За случайную генерацию каждого этапа вы получаете 1 очко опыта — ручной выбор
+            или переброс опыта не приносят.
           </p>
           <OrnateDivider className="mt-6" />
         </div>
@@ -182,19 +232,65 @@ const CharacterGenerator = () => {
                   {originRolling ? 'Бросаем d10…' : 'Бросить d10'}
                 </button>
               </div>
+            ) : originRolling ? (
+              <p className="flex items-center gap-2 font-body text-parchment/80 py-4">
+                <Icon name="Dices" size={16} className="animate-spin text-gold" /> Кости катятся…
+              </p>
             ) : (
-              <div className="flex items-center gap-4 animate-fade-in">
-                {origin?.portrait && (
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-gold/50 shadow-md">
-                    <img src={origin.portrait} alt={origin.title} className="h-full w-full object-cover" />
+              <div className="animate-fade-in">
+                <div className="flex items-center gap-4">
+                  {origin?.portrait && (
+                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-gold/50 shadow-md">
+                      <img src={origin.portrait} alt={origin.title} className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                  <div>
+                    {originRoll !== null && (
+                      <p className="font-body text-sm text-muted-foreground">
+                        Выпало: <span className="text-gold font-semibold">{originRoll}</span>
+                      </p>
+                    )}
+                    <p className="font-display text-xl font-bold text-parchment">{origin?.title}</p>
+                    {originManual && (
+                      <p className="font-body text-xs text-gold/60 uppercase tracking-wide mt-0.5">
+                        Выбрано вручную · опыт не начислен
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <button
+                    onClick={rerollOrigin}
+                    className="flex items-center gap-2 rounded border border-gold/40 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-widest text-parchment hover:bg-secondary transition-colors"
+                  >
+                    <Icon name="RotateCcw" size={14} /> Перебросить
+                  </button>
+                  <button
+                    onClick={() => setOriginPickerOpen((v) => !v)}
+                    className="flex items-center gap-2 rounded border border-gold/40 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-widest text-parchment hover:bg-secondary transition-colors"
+                  >
+                    <Icon name="Pencil" size={14} /> Выбрать вручную
+                  </button>
+                </div>
+
+                {originPickerOpen && (
+                  <div className="mt-3 flex flex-wrap gap-2 animate-fade-in">
+                    {originOptions.map((o) => (
+                      <button
+                        key={o.id}
+                        onClick={() => chooseOriginManually(o.id)}
+                        className={`rounded border px-3 py-1.5 font-display text-xs uppercase tracking-wide transition-colors ${
+                          o.id === originId
+                            ? 'border-gold bg-secondary text-gold-bright'
+                            : 'border-gold/30 text-parchment/80 hover:bg-secondary'
+                        }`}
+                      >
+                        {o.title}
+                      </button>
+                    ))}
                   </div>
                 )}
-                <div>
-                  <p className="font-body text-sm text-muted-foreground">
-                    Выпало: <span className="text-gold font-semibold">{originRoll}</span>
-                  </p>
-                  <p className="font-display text-xl font-bold text-parchment">{origin?.title}</p>
-                </div>
               </div>
             )}
           </section>
@@ -211,6 +307,7 @@ const CharacterGenerator = () => {
               <p className="font-body text-base text-muted-foreground mb-5">
                 Каждый бросок повышает случайную характеристику на +1. Повторные значения
                 перебрасываются автоматически. Выпадение 10 позволяет выбрать характеристику самому.
+                Ручной выбор или переброс результата опыта не приносят.
               </p>
 
               <div className="space-y-4">
@@ -252,10 +349,10 @@ const CharacterGenerator = () => {
                             Выпало 10 — выберите характеристику для усиления:
                           </p>
                           <div className="flex flex-wrap gap-2">
-                            {ALL_LABELS.filter((l) => !doneBoostedLabels.has(l)).map((l) => (
+                            {availableLabelsForRound(idx).map((l) => (
                               <button
                                 key={l}
-                                onClick={() => chooseFree(idx, l)}
+                                onClick={() => chooseFree(idx, l, round.manual)}
                                 className="rounded border border-gold/40 px-3 py-1 font-display text-xs uppercase tracking-wide text-gold hover:bg-secondary transition-colors"
                               >
                                 {l}
@@ -266,10 +363,50 @@ const CharacterGenerator = () => {
                       )}
 
                       {round.status === 'done' && round.resultLabel && (
-                        <p className="font-body text-parchment/90">
-                          Усилена характеристика:{' '}
-                          <span className="text-gold-bright font-semibold">{round.resultLabel} +1</span>
-                        </p>
+                        <div>
+                          <p className="font-body text-parchment/90">
+                            Усилена характеристика:{' '}
+                            <span className="text-gold-bright font-semibold">{round.resultLabel} +1</span>
+                          </p>
+                          {round.manual && (
+                            <p className="font-body text-xs text-gold/60 uppercase tracking-wide mt-0.5">
+                              Изменено вручную · опыт за этап не начислен
+                            </p>
+                          )}
+
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            <button
+                              onClick={() => rerollRound(idx)}
+                              className="flex items-center gap-2 rounded border border-gold/40 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-widest text-parchment hover:bg-secondary transition-colors"
+                            >
+                              <Icon name="RotateCcw" size={13} /> Перебросить
+                            </button>
+                            <button
+                              onClick={() => toggleRoundPicker(idx)}
+                              className="flex items-center gap-2 rounded border border-gold/40 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-widest text-parchment hover:bg-secondary transition-colors"
+                            >
+                              <Icon name="Pencil" size={13} /> Выбрать вручную
+                            </button>
+                          </div>
+
+                          {roundPickerOpen[idx] && (
+                            <div className="mt-3 flex flex-wrap gap-2 animate-fade-in">
+                              {availableLabelsForRound(idx).map((l) => (
+                                <button
+                                  key={l}
+                                  onClick={() => chooseFree(idx, l, true)}
+                                  className={`rounded border px-3 py-1 font-display text-xs uppercase tracking-wide transition-colors ${
+                                    l === round.resultLabel
+                                      ? 'border-gold bg-secondary text-gold-bright'
+                                      : 'border-gold/30 text-parchment/80 hover:bg-secondary'
+                                  }`}
+                                >
+                                  {l}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   );
