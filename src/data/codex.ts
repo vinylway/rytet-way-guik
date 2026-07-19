@@ -5,7 +5,24 @@ export interface CodexEntry {
   summary: string;
   tags: string[];
   meta?: string;
+  category?: ItemCategoryId;
+  stats?: { label: string; value: string }[];
 }
+
+export type ItemCategoryId = 'melee' | 'throwing' | 'ranged' | 'armor';
+
+export interface ItemCategory {
+  id: ItemCategoryId;
+  title: string;
+  icon: string;
+}
+
+export const itemCategories: ItemCategory[] = [
+  { id: 'melee', title: 'Ближний бой', icon: 'Sword' },
+  { id: 'throwing', title: 'Метательное оружие', icon: 'Target' },
+  { id: 'ranged', title: 'Дальний бой', icon: 'Crosshair' },
+  { id: 'armor', title: 'Доспехи', icon: 'ShieldHalf' },
+];
 
 export type SectionId =
   | 'rules'
@@ -75,19 +92,32 @@ export const entries: CodexEntry[] = [
     tags: ['древень', 'лесные эльфы', 'атель лорен', 'дерево'], meta: 'Угроза: высокая',
   },
   {
-    id: 'i1', section: 'items', title: 'Рунический молот гномов',
+    id: 'i1', section: 'items', title: 'Рунический молот гномов', category: 'melee',
     summary: 'Выкованное в кузнях Караз-а-Карака оружие с рунами Мастера. Игнорирует часть доспеха и наносит бонусный урон демонам.',
     tags: ['молот', 'руны', 'гномы', 'оружие'], meta: 'Артефакт',
   },
   {
-    id: 'i2', section: 'items', title: 'Ithilmar-доспех',
+    id: 'i2', section: 'items', title: 'Ithilmar-доспех', category: 'armor',
     summary: 'Лёгкий эльфийский сплав, дающий защиту тяжёлой брони при весе кожаной. Ценится дороже золота.',
     tags: ['доспех', 'итильмар', 'эльфы', 'защита'], meta: 'Редкий',
   },
   {
-    id: 'i3', section: 'items', title: 'Хохландская длинная винтовка',
+    id: 'i3', section: 'items', title: 'Хохландская длинная винтовка', category: 'ranged',
     summary: 'Дальнобойное огнестрельное оружие Империи. Требует раунд на перезарядку, но пробивает любой доспех на дистанции.',
     tags: ['винтовка', 'порох', 'империя', 'дальний бой'], meta: 'Снаряжение',
+  },
+  {
+    id: 'i4', section: 'items', title: 'Метательное копьё', category: 'throwing',
+    summary: 'Метательное копьё: оружие, также известное как дротик. Оно часто применяется всадниками норскийских мародёров и другими отрядами конных застрельщиков для поддержки во время стремительного сближения с противником перед переходом в ближний бой.',
+    tags: ['копьё', 'дротик', 'мародёры', 'метательное'], meta: 'Снаряжение',
+    stats: [
+      { label: 'Название', value: 'Метательное копьё' },
+      { label: 'Мин. цена', value: 'Медь' },
+      { label: 'Оптимальная дистанция', value: 'Ближняя-средняя' },
+      { label: 'Урон', value: 'С' },
+      { label: '1Р/2Р', value: '1Р' },
+      { label: 'Черты', value: '—' },
+    ],
   },
   {
     id: 'm1', section: 'magic', title: 'Ветер Азир (Небеса)',

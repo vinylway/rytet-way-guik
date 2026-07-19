@@ -35,6 +35,23 @@ const EntryDialog = ({ entry, onOpenChange }: EntryDialogProps) => {
               {entry.summary}
             </p>
 
+            {entry.stats && entry.stats.length > 0 && (
+              <div className="mt-6 overflow-hidden rounded border border-gold/25">
+                <table className="w-full font-body text-base">
+                  <tbody>
+                    {entry.stats.map((s, i) => (
+                      <tr key={s.label} className={i % 2 === 0 ? 'bg-secondary/40' : ''}>
+                        <td className="px-4 py-2 font-display text-xs uppercase tracking-wide text-gold/80 whitespace-nowrap">
+                          {s.label}
+                        </td>
+                        <td className="px-4 py-2 text-parchment/90">{s.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
             <div className="mt-6 flex flex-wrap gap-2">
               {entry.tags.map((t) => (
                 <span key={t} className="rounded-full border border-gold/30 px-3 py-1 font-body text-sm text-parchment/70">
