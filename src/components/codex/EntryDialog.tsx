@@ -102,42 +102,44 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
                   </div>
                 </div>
 
-                <div>
-                  <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">Навыки</p>
-                  <p className="font-body text-parchment/90">{cs.skills.join(', ')}</p>
-                </div>
-
-                <div>
-                  <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2">Атаки</p>
-                  <div className="overflow-hidden rounded border border-gold/25">
-                    <table className="w-full font-body text-sm">
-                      <thead>
-                        <tr className="bg-secondary/60">
-                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Название</th>
-                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Дистанция</th>
-                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Формула</th>
-                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Урон</th>
-                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">1 Рука / 2 Руки</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {cs.attacks.map((a, i) => (
-                          <tr key={a.name} className={i % 2 === 0 ? 'bg-secondary/20' : ''}>
-                            <td className="px-3 py-1.5 text-parchment/90">{a.name}</td>
-                            <td className="px-3 py-1.5 text-parchment/90">{a.range}</td>
-                            <td className="px-3 py-1.5 text-parchment/90">{a.formula}</td>
-                            <td className="px-3 py-1.5 text-parchment/90">{a.damage}</td>
-                            <td className="px-3 py-1.5 text-parchment/90">{a.rounds}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                <div className="rounded border border-gold/25 divide-y divide-gold/15">
+                  <div className="p-3">
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">Навыки</p>
+                    <p className="font-body text-parchment/90">{cs.skills.join(', ')}</p>
                   </div>
-                </div>
 
-                <div>
-                  <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">Типы защиты</p>
-                  <p className="font-body text-parchment/90">{cs.defenses.join(', ')}</p>
+                  <div className="p-3">
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2">Атаки</p>
+                    <div className="overflow-hidden rounded border border-gold/25">
+                      <table className="w-full font-body text-sm">
+                        <thead>
+                          <tr className="bg-secondary/60">
+                            <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Название</th>
+                            <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Дистанция</th>
+                            <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Пул костей</th>
+                            <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Урон</th>
+                            <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">1Р / 2Р</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cs.attacks.map((a, i) => (
+                            <tr key={a.name} className={i % 2 === 0 ? 'bg-secondary/20' : ''}>
+                              <td className="px-3 py-1.5 text-parchment/90">{a.name}</td>
+                              <td className="px-3 py-1.5 text-parchment/90">{a.range}</td>
+                              <td className="px-3 py-1.5 text-parchment/90">{a.formula}</td>
+                              <td className="px-3 py-1.5 text-parchment/90">{a.damage}</td>
+                              <td className="px-3 py-1.5 text-parchment/90">{a.rounds}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div className="p-3">
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">Типы защиты</p>
+                    <p className="font-body text-parchment/90">{cs.defenses.join(', ')}</p>
+                  </div>
                 </div>
 
                 {cs.abilities.length > 0 && (

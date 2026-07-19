@@ -272,8 +272,8 @@ export const entries: CodexEntry[] = [
       { label: 'Название', value: 'Кинжал' },
       { label: 'Оптимальная дистанция', value: 'Ближняя' },
       { label: 'Урон', value: '2' },
-      { label: '1 Рука / 2 Руки', value: '1Р' },
-      { label: 'Формула', value: '2d/2' },
+      { label: '1Р / 2Р', value: '1Р' },
+      { label: 'Пул костей', value: '2d/2' },
     ],
   },
   {
