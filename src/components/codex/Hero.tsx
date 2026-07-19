@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import OrnateDivider from './OrnateDivider';
 
@@ -37,6 +38,13 @@ const Hero = ({ onSearchClick }: HeroProps) => {
             <Icon name="BookOpen" size={18} />
             Открыть разделы
           </button>
+          <Link
+            to="/generator"
+            className="flex items-center gap-3 rounded border border-gold/40 px-8 py-3 font-display text-sm font-semibold uppercase tracking-widest text-parchment hover:bg-secondary transition-colors"
+          >
+            <Icon name="Dices" size={18} />
+            Создать персонажа
+          </Link>
         </div>
 
         <div className="mt-14 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 font-display text-sm uppercase tracking-widest text-parchment/60">

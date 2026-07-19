@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import { sections } from '@/data/codex';
 
@@ -33,6 +34,13 @@ const Header = () => {
               {s.title}
             </button>
           ))}
+          <Link
+            to="/generator"
+            className="story-link flex items-center gap-1.5 font-display text-sm uppercase tracking-widest text-gold hover:text-gold-bright transition-colors"
+          >
+            <Icon name="Dices" size={16} />
+            Генератор
+          </Link>
         </nav>
 
         <button
@@ -57,6 +65,14 @@ const Header = () => {
                 {s.title}
               </button>
             ))}
+            <Link
+              to="/generator"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded px-3 py-2 text-left font-display text-sm uppercase tracking-wide text-gold hover:bg-secondary transition-colors"
+            >
+              <Icon name="Dices" size={16} />
+              Генератор
+            </Link>
           </div>
         </nav>
       )}
