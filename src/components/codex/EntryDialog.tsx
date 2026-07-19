@@ -25,7 +25,7 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
             <h2 className="mt-3 text-center font-display text-2xl md:text-3xl font-bold text-gradient-gold">
               {entry.title}
             </h2>
-            {entry.meta && (
+            {entry.meta && entry.section !== 'creatures' && (
               <p className="mt-1 text-center font-display text-xs uppercase tracking-widest text-parchment/60">
                 {entry.meta}
               </p>
@@ -112,7 +112,7 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
                           <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Дистанция</th>
                           <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Формула</th>
                           <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Урон</th>
-                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Раунды</th>
+                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">1 Рука / 2 Руки</th>
                         </tr>
                       </thead>
                       <tbody>

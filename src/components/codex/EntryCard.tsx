@@ -20,7 +20,7 @@ const EntryCard = ({ entry, onSelect }: EntryCardProps) => {
           <Icon name={section?.icon ?? 'Circle'} size={18} fallback="Circle" />
           <span className="font-display text-xs uppercase tracking-widest text-gold/80">{section?.title}</span>
         </span>
-        {entry.meta && (
+        {entry.meta && entry.section !== 'creatures' && (
           <span className="rounded-full border border-gold/30 px-3 py-0.5 font-display text-[10px] uppercase tracking-wider text-parchment/60">
             {entry.meta}
           </span>

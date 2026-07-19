@@ -22,13 +22,6 @@ const ItemsGrid = ({ items, onSelect }: { items: CodexEntry[]; onSelect: (e: Cod
 
   return (
     <div className="space-y-10">
-      {ungrouped.length > 0 && (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {ungrouped.map((entry) => (
-            <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
-          ))}
-        </div>
-      )}
       {groups.map((group) => (
         <div key={group}>
           <div className="mb-4 flex items-center gap-3">
@@ -43,6 +36,13 @@ const ItemsGrid = ({ items, onSelect }: { items: CodexEntry[]; onSelect: (e: Cod
           </div>
         </div>
       ))}
+      {ungrouped.length > 0 && (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {ungrouped.map((entry) => (
+            <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
