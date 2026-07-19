@@ -51,6 +51,7 @@ export interface CodexEntry {
   stats?: { label: string; value: string }[];
   subgroup?: string;
   creatureStats?: CreatureStatBlock;
+  portrait?: string;
 }
 
 export interface Subgroup {
@@ -138,9 +139,10 @@ export const entries: CodexEntry[] = [
     tags: ['помощь', 'кооперация', 'проверка', 'атака'], meta: 'Глава III',
   },
   {
-    id: 'c5', section: 'creatures', source: 'gm', title: 'Имперский крестьянин', subgroup: 'Великое герцогство Талабек',
-    summary: 'Простой землепашец Талабека, привыкший постоять за свой дом. В одиночку слаб, но в толпе с факелами и вилами способен смять даже опытного бойца численным превосходством.',
+    id: 'c5', section: 'creatures', source: 'gm', title: 'Селянин Империи', subgroup: 'Великое герцогство Талабек',
+    summary: 'Обычный житель деревни, привыкший защищать свой дом и семью. В одиночку он не представляет серьёзной угрозы для опытного бойца, но в составе разъярённой толпы, вооружённой факелами и вилами, способен задавить противника числом и напором.',
     tags: ['крестьянин', 'талабек', 'империя', 'прислужник'], meta: 'Угроза: низкая',
+    portrait: 'https://cdn.poehali.dev/projects/8ea67526-cf7e-472d-ad6c-bad53fcea4bc/bucket/30d3631b-3761-4323-bde8-c94fc63c3078.png',
     creatureStats: {
       characteristics: [
         { code: 'ББ', value: 2 },

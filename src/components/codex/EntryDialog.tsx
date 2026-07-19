@@ -22,6 +22,11 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
               <Icon name={section?.icon ?? 'Circle'} size={22} fallback="Circle" />
               <span className="font-display text-xs uppercase tracking-[0.2em] text-gold/80">{section?.title}</span>
             </div>
+            {entry.portrait && (
+              <div className="mx-auto mt-4 h-28 w-28 overflow-hidden rounded-full border-2 border-gold/50 shadow-md">
+                <img src={entry.portrait} alt={entry.title} className="h-full w-full object-cover" />
+              </div>
+            )}
             <h2 className="mt-3 text-center font-display text-2xl md:text-3xl font-bold text-gradient-gold">
               {entry.title}
             </h2>

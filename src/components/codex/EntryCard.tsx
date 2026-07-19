@@ -26,7 +26,12 @@ const EntryCard = ({ entry, onSelect }: EntryCardProps) => {
           </span>
         )}
       </div>
-      <h3 className="font-display text-lg font-semibold text-parchment group-hover:text-gold-bright transition-colors">
+      {entry.portrait && (
+        <div className="mx-auto mb-3 h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-gold/50 shadow-md">
+          <img src={entry.portrait} alt={entry.title} className="h-full w-full object-cover" />
+        </div>
+      )}
+      <h3 className={`font-display text-lg font-semibold text-parchment group-hover:text-gold-bright transition-colors ${entry.portrait ? 'text-center' : ''}`}>
         {entry.title}
       </h3>
       <p className="mt-2 font-body text-base text-muted-foreground leading-snug line-clamp-3">
