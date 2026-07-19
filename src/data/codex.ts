@@ -14,6 +14,31 @@ export const sources: Source[] = [
   { id: 'talagaad-adventures', title: 'Приключения в Талагааде', icon: 'Compass' },
 ];
 
+export interface CreatureAttack {
+  name: string;
+  range: string;
+  formula: string;
+  damage: string;
+  rounds: string;
+}
+
+export interface CreatureAbility {
+  name: string;
+  description: string;
+  linkEntryId?: string;
+}
+
+export interface CreatureStatBlock {
+  characteristics: { code: string; value: number }[];
+  speed: string;
+  wounds: number;
+  type: string;
+  skills: string[];
+  attacks: CreatureAttack[];
+  defenses: string[];
+  abilities: CreatureAbility[];
+}
+
 export interface CodexEntry {
   id: string;
   title: string;
@@ -24,6 +49,8 @@ export interface CodexEntry {
   meta?: string;
   category?: ItemCategoryId;
   stats?: { label: string; value: string }[];
+  subgroup?: string;
+  creatureStats?: CreatureStatBlock;
 }
 
 export type ItemCategoryId = 'melee' | 'throwing' | 'ranged' | 'armor';
@@ -87,6 +114,11 @@ export const entries: CodexEntry[] = [
     tags: ['судьба', 'переброс', 'удача'], meta: 'Глава II',
   },
   {
+    id: 'r5', section: 'rules', source: 'player', title: 'Помощь',
+    summary: 'Персонаж может ПОМОЧЬ союзнику совершить проверку или атаку в рукопашном бою. Помогающий не проходит собственную проверку — вместо этого цель его помощи получает +1d к своей проверке за каждого помогающего, если иное не указано особыми правилами или способностями.',
+    tags: ['помощь', 'кооперация', 'проверка', 'атака'], meta: 'Глава III',
+  },
+  {
     id: 'c1', section: 'creatures', source: 'gm', title: 'Гоблин Ночных Гоблинов',
     summary: 'Трусливый, но многочисленный обитатель пещер. Боится света, использует ядовитые грибы и фанатиков с шарами на цепях.',
     tags: ['гоблин', 'орки', 'пещеры', 'яд'], meta: 'Угроза: низкая',
@@ -95,6 +127,39 @@ export const entries: CodexEntry[] = [
     id: 'c2', section: 'creatures', source: 'gm', title: 'Имперский Грифон',
     summary: 'Гордый хищник Серых гор, символ Рейкланда. Приручается рыцарями, обладает мощной атакой когтями и клювом.',
     tags: ['грифон', 'империя', 'горы', 'ездовое'], meta: 'Угроза: высокая',
+  },
+  {
+    id: 'c5', section: 'creatures', source: 'gm', title: 'Имперский крестьянин', subgroup: 'Великое герцогство Талабек',
+    summary: 'Простой землепашец Талабека, привыкший постоять за свой дом. В одиночку слаб, но в толпе с факелами и вилами способен смять даже опытного бойца численным превосходством.',
+    tags: ['крестьянин', 'талабек', 'империя', 'прислужник'], meta: 'Угроза: низкая',
+    creatureStats: {
+      characteristics: [
+        { code: 'ББ', value: 2 },
+        { code: 'ДБ', value: 3 },
+        { code: 'С', value: 3 },
+        { code: 'В', value: 3 },
+        { code: 'И', value: 2 },
+        { code: 'Пр', value: 3 },
+        { code: 'Р', value: 2 },
+        { code: 'Х', value: 2 },
+      ],
+      speed: 'Нормальная',
+      wounds: 3,
+      type: 'Прислужник',
+      skills: ['обычные 2', 'тяжёлый труд 3'],
+      attacks: [
+        { name: 'Охотничий лук', range: 'Средняя-дальняя', formula: '3d/2', damage: '3', rounds: '2Р' },
+        { name: 'Импровизированное оружие', range: 'Ближняя', formula: '2d/2', damage: '2', rounds: '1Р' },
+      ],
+      defenses: ['Атлетика 3d/2'],
+      abilities: [
+        {
+          name: 'Факелы и вилы',
+          description: 'Толпа разъярённых крестьян может подавить противника численным преимуществом. Когда крестьянин ПОМОГАЕТ союзнику совершить атаку в рукопашном бою, проверка не требуется — цель получает +1d к проверке атаки. Этот модификатор может превышать обычный максимальный лимит костей.',
+          linkEntryId: 'r5',
+        },
+      ],
+    },
   },
   {
     id: 'c3', section: 'creatures', source: 'trinity', title: 'Вампир из рода фон Карштайн',

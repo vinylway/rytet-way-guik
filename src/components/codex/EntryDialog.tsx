@@ -6,14 +6,16 @@ import OrnateDivider from './OrnateDivider';
 interface EntryDialogProps {
   entry: CodexEntry | null;
   onOpenChange: (v: boolean) => void;
+  onNavigate?: (entryId: string) => void;
 }
 
-const EntryDialog = ({ entry, onOpenChange }: EntryDialogProps) => {
+const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
   const section = entry ? sections.find((s) => s.id === entry.section) : null;
+  const cs = entry?.creatureStats;
 
   return (
     <Dialog open={!!entry} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg bg-card parchment-panel ornate-frame">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto bg-card parchment-panel ornate-frame">
         {entry && (
           <div className="animate-fade-in">
             <div className="flex items-center justify-center gap-2 text-gold">
@@ -26,6 +28,11 @@ const EntryDialog = ({ entry, onOpenChange }: EntryDialogProps) => {
             {entry.meta && (
               <p className="mt-1 text-center font-display text-xs uppercase tracking-widest text-parchment/60">
                 {entry.meta}
+              </p>
+            )}
+            {entry.subgroup && (
+              <p className="mt-1 text-center font-display text-[11px] uppercase tracking-widest text-gold/70">
+                {entry.subgroup}
               </p>
             )}
 
@@ -49,6 +56,108 @@ const EntryDialog = ({ entry, onOpenChange }: EntryDialogProps) => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+
+            {cs && (
+              <div className="mt-6 space-y-5">
+                <div className="overflow-hidden rounded border border-gold/25">
+                  <table className="w-full font-body text-sm text-center">
+                    <thead>
+                      <tr className="bg-secondary/60">
+                        {cs.characteristics.map((c) => (
+                          <th key={c.code} className="px-2 py-1.5 font-display text-[11px] uppercase tracking-wide text-gold/80">
+                            {c.code}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        {cs.characteristics.map((c) => (
+                          <td key={c.code} className="px-2 py-1.5 text-parchment/90">{c.value}</td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="rounded border border-gold/20 py-2">
+                    <p className="font-display text-[10px] uppercase tracking-wide text-gold/70">Скорость</p>
+                    <p className="font-body text-parchment/90">{cs.speed}</p>
+                  </div>
+                  <div className="rounded border border-gold/20 py-2">
+                    <p className="font-display text-[10px] uppercase tracking-wide text-gold/70">Живучесть</p>
+                    <p className="font-body text-parchment/90">{cs.wounds}</p>
+                  </div>
+                  <div className="rounded border border-gold/20 py-2">
+                    <p className="font-display text-[10px] uppercase tracking-wide text-gold/70">Тип</p>
+                    <p className="font-body text-parchment/90">{cs.type}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">Навыки</p>
+                  <p className="font-body text-parchment/90">{cs.skills.join(', ')}</p>
+                </div>
+
+                <div>
+                  <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2">Атаки</p>
+                  <div className="overflow-hidden rounded border border-gold/25">
+                    <table className="w-full font-body text-sm">
+                      <thead>
+                        <tr className="bg-secondary/60">
+                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Название</th>
+                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Дистанция</th>
+                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Формула</th>
+                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Урон</th>
+                          <th className="px-3 py-1.5 text-left font-display text-[10px] uppercase tracking-wide text-gold/80">Раунды</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cs.attacks.map((a, i) => (
+                          <tr key={a.name} className={i % 2 === 0 ? 'bg-secondary/20' : ''}>
+                            <td className="px-3 py-1.5 text-parchment/90">{a.name}</td>
+                            <td className="px-3 py-1.5 text-parchment/90">{a.range}</td>
+                            <td className="px-3 py-1.5 text-parchment/90">{a.formula}</td>
+                            <td className="px-3 py-1.5 text-parchment/90">{a.damage}</td>
+                            <td className="px-3 py-1.5 text-parchment/90">{a.rounds}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">Типы защиты</p>
+                  <p className="font-body text-parchment/90">{cs.defenses.join(', ')}</p>
+                </div>
+
+                {cs.abilities.length > 0 && (
+                  <div>
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2">Уникальные способности</p>
+                    <div className="space-y-3">
+                      {cs.abilities.map((ab) => (
+                        <div key={ab.name} className="rounded border border-gold/20 p-3">
+                          <p className="font-display font-semibold text-gold-bright mb-1">{ab.name}</p>
+                          <p className="font-body text-parchment/85 leading-snug">
+                            {ab.description}
+                          </p>
+                          {ab.linkEntryId && onNavigate && (
+                            <button
+                              onClick={() => onNavigate(ab.linkEntryId as string)}
+                              className="story-link mt-2 inline-flex items-center gap-1 font-display text-xs uppercase tracking-wide text-gold hover:text-gold-bright transition-colors"
+                            >
+                              <Icon name="BookOpen" size={13} /> Правило: Помощь
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

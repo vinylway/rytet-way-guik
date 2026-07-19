@@ -8,18 +8,44 @@ interface SectionsProps {
   onSelect: (entry: CodexEntry) => void;
 }
 
-const ItemsGrid = ({ items, onSelect }: { items: CodexEntry[]; onSelect: (e: CodexEntry) => void }) => (
-  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-    {items.map((entry) => (
-      <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
-    ))}
-    {items.length === 0 && (
-      <p className="col-span-full font-body text-muted-foreground text-center py-10">
+const ItemsGrid = ({ items, onSelect }: { items: CodexEntry[]; onSelect: (e: CodexEntry) => void }) => {
+  if (items.length === 0) {
+    return (
+      <p className="font-body text-muted-foreground text-center py-10">
         В этом разделе пока нет записей
       </p>
-    )}
-  </div>
-);
+    );
+  }
+
+  const ungrouped = items.filter((e) => !e.subgroup);
+  const groups = Array.from(new Set(items.filter((e) => e.subgroup).map((e) => e.subgroup as string)));
+
+  return (
+    <div className="space-y-10">
+      {ungrouped.length > 0 && (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {ungrouped.map((entry) => (
+            <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
+          ))}
+        </div>
+      )}
+      {groups.map((group) => (
+        <div key={group}>
+          <div className="mb-4 flex items-center gap-3">
+            <Icon name="MapPin" size={16} className="text-gold" />
+            <h4 className="font-display text-sm uppercase tracking-[0.15em] text-gold/90">{group}</h4>
+            <span className="h-px flex-1 bg-gold/20" />
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {items.filter((e) => e.subgroup === group).map((entry) => (
+              <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const Sections = ({ onSelect }: SectionsProps) => {
   const contentSections = sections.filter((s) => s.id !== 'contacts');

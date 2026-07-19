@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CodexEntry } from '@/data/codex';
+import { CodexEntry, entries } from '@/data/codex';
 import Header from '@/components/codex/Header';
 import Hero from '@/components/codex/Hero';
 import Sections from '@/components/codex/Sections';
@@ -34,7 +34,14 @@ const Index = () => {
       <Footer />
 
       <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} onSelect={setActiveEntry} />
-      <EntryDialog entry={activeEntry} onOpenChange={() => setActiveEntry(null)} />
+      <EntryDialog
+        entry={activeEntry}
+        onOpenChange={() => setActiveEntry(null)}
+        onNavigate={(id) => {
+          const target = entries.find((e) => e.id === id);
+          if (target) setActiveEntry(target);
+        }}
+      />
     </div>
   );
 };
