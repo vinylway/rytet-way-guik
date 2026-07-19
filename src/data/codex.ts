@@ -28,6 +28,11 @@ export interface CreatureAbility {
   linkEntryId?: string;
 }
 
+export interface CreatureEquipmentItem {
+  name: string;
+  linkEntryId?: string;
+}
+
 export interface CreatureStatBlock {
   characteristics: { code: string; value: number }[];
   speed: string;
@@ -37,6 +42,7 @@ export interface CreatureStatBlock {
   attacks: CreatureAttack[];
   defenses: string[];
   abilities: CreatureAbility[];
+  equipment?: CreatureEquipmentItem[];
 }
 
 export interface CodexEntry {
@@ -73,7 +79,7 @@ export const subgroups: Subgroup[] = [
   { id: 'great-forest', title: 'Чудовища Великого леса', sectionId: 'creatures', sourceId: 'gm' },
 ];
 
-export type ItemCategoryId = 'melee' | 'throwing' | 'ranged' | 'armor';
+export type ItemCategoryId = 'melee' | 'throwing' | 'ranged' | 'armor' | 'tools';
 
 export interface ItemCategory {
   id: ItemCategoryId;
@@ -85,7 +91,8 @@ export const itemCategories: ItemCategory[] = [
   { id: 'melee', title: 'Ближний бой', icon: 'Sword' },
   { id: 'throwing', title: 'Метательное оружие', icon: 'Target' },
   { id: 'ranged', title: 'Дальний бой', icon: 'Crosshair' },
-  { id: 'armor', title: 'Доспехи', icon: 'ShieldHalf' },
+  { id: 'armor', title: 'Одежда и броня', icon: 'ShieldHalf' },
+  { id: 'tools', title: 'Инструменты и наборы', icon: 'Wrench' },
 ];
 
 export type SectionId = 'rules' | 'creatures' | 'items' | 'magic' | 'contacts';
@@ -139,7 +146,7 @@ export const entries: CodexEntry[] = [
     tags: ['помощь', 'кооперация', 'проверка', 'атака'], meta: 'Глава III',
   },
   {
-    id: 'c5', section: 'creatures', source: 'gm', title: 'Селянин Империи', subgroup: 'Великое герцогство Талабек',
+    id: 'c5', section: 'creatures', source: 'gm', title: 'Имперский крестьянин', subgroup: 'Великое герцогство Талабек',
     summary: 'Обычный житель деревни, привыкший защищать свой дом и семью. В одиночку он не представляет серьёзной угрозы для опытного бойца, но в составе разъярённой толпы, вооружённой факелами и вилами, способен задавить противника числом и напором.',
     tags: ['крестьянин', 'талабек', 'империя', 'прислужник'], meta: 'Угроза: низкая',
     portrait: 'https://cdn.poehali.dev/projects/8ea67526-cf7e-472d-ad6c-bad53fcea4bc/bucket/30d3631b-3761-4323-bde8-c94fc63c3078.png',
@@ -173,6 +180,43 @@ export const entries: CodexEntry[] = [
     },
   },
   {
+    id: 'c6', section: 'creatures', source: 'gm', title: 'Имперский горожанин', subgroup: 'Великое герцогство Талабек',
+    summary: 'Постоянный житель города — ремесленник, торговец или служащий. Знает свою округу и настороженно относится к чужакам, что делает его непростой мишенью для воров и мошенников.',
+    tags: ['горожанин', 'талабек', 'империя', 'прислужник'], meta: 'Угроза: низкая',
+    creatureStats: {
+      characteristics: [
+        { code: 'ББ', value: 2 },
+        { code: 'ДБ', value: 2 },
+        { code: 'С', value: 3 },
+        { code: 'В', value: 3 },
+        { code: 'И', value: 3 },
+        { code: 'Пр', value: 2 },
+        { code: 'Р', value: 3 },
+        { code: 'Х', value: 3 },
+      ],
+      speed: 'Нормальная',
+      wounds: 3,
+      type: 'Прислужник',
+      skills: ['обычные 2', 'сила воли 3', 'память 3', 'обаяние 3'],
+      attacks: [
+        { name: 'Кинжал', range: 'Ближняя', formula: '2d/2', damage: '2', rounds: '1Р' },
+      ],
+      defenses: ['Атлетика 2d/2'],
+      abilities: [
+        {
+          name: 'Уличная мудрость',
+          description: 'Постоянные жители города знают, что стоит настороженно относиться к подозрительным личностям. Горожане получают +1d к наблюдательности для встречных проверок при противодействии попыткам карманной кражи.',
+        },
+      ],
+      equipment: [
+        { name: 'Кинжал', linkEntryId: 'i6' },
+        { name: 'Бюргерский наряд', linkEntryId: 'i7' },
+        { name: 'Ремесленные инструменты по профессии (если применимо)', linkEntryId: 'i8' },
+        { name: 'Мелочь (серебро)' },
+      ],
+    },
+  },
+  {
     id: 'i1', section: 'items', source: 'player', title: 'Рунический молот гномов', category: 'melee',
     summary: 'Выкованное в кузнях Караз-а-Карака оружие с рунами Мастера. Игнорирует часть доспеха и наносит бонусный урон демонам.',
     tags: ['молот', 'руны', 'гномы', 'оружие'], meta: 'Артефакт',
@@ -181,6 +225,28 @@ export const entries: CodexEntry[] = [
     id: 'i2', section: 'items', source: 'player', title: 'Ithilmar-доспех', category: 'armor',
     summary: 'Лёгкий эльфийский сплав, дающий защиту тяжёлой брони при весе кожаной. Ценится дороже золота.',
     tags: ['доспех', 'итильмар', 'эльфы', 'защита'], meta: 'Редкий',
+  },
+  {
+    id: 'i6', section: 'items', source: 'player', title: 'Кинжал', category: 'melee',
+    summary: 'Короткий клинок для рукопашной схватки на ближней дистанции. Лёгкое, доступное и всегда пригодится оружие — от кухни до тёмного переулка.',
+    tags: ['кинжал', 'клинок', 'оружие'], meta: 'Снаряжение',
+    stats: [
+      { label: 'Название', value: 'Кинжал' },
+      { label: 'Оптимальная дистанция', value: 'Ближняя' },
+      { label: 'Урон', value: '2' },
+      { label: '1 Рука / 2 Руки', value: '1Р' },
+      { label: 'Формула', value: '2d/2' },
+    ],
+  },
+  {
+    id: 'i7', section: 'items', source: 'player', title: 'Бюргерский наряд', category: 'armor',
+    summary: 'Опрятная одежда зажиточного горожанина — ремесленника или торговца. Не защищает как доспех, но подчёркивает статус и достаток владельца.',
+    tags: ['одежда', 'бюргер', 'наряд', 'город'], meta: 'Снаряжение',
+  },
+  {
+    id: 'i8', section: 'items', source: 'player', title: 'Ремесленные инструменты', category: 'tools',
+    summary: 'Набор инструментов, необходимых для работы по конкретной профессии — от молотка кузнеца до игл портного. Без них ремесленник не сможет применить свои профессиональные навыки.',
+    tags: ['инструменты', 'ремесло', 'профессия', 'набор'], meta: 'Снаряжение',
   },
   {
     id: 'i3', section: 'items', source: 'player', title: 'Хохландская длинная винтовка', category: 'ranged',

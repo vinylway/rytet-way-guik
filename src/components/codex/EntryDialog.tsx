@@ -155,12 +155,35 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
                               onClick={() => onNavigate(ab.linkEntryId as string)}
                               className="story-link mt-2 inline-flex items-center gap-1 font-display text-xs uppercase tracking-wide text-gold hover:text-gold-bright transition-colors"
                             >
-                              <Icon name="BookOpen" size={13} /> Правило: Помощь
+                              <Icon name="BookOpen" size={13} /> Подробнее
                             </button>
                           )}
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {cs.equipment && cs.equipment.length > 0 && (
+                  <div>
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2">Типичное снаряжение</p>
+                    <ul className="space-y-1.5">
+                      {cs.equipment.map((eq) => (
+                        <li key={eq.name} className="font-body text-parchment/90 flex items-center gap-2">
+                          <Icon name="Dot" size={16} className="text-gold shrink-0" />
+                          {eq.linkEntryId && onNavigate ? (
+                            <button
+                              onClick={() => onNavigate(eq.linkEntryId as string)}
+                              className="story-link text-left hover:text-gold-bright transition-colors"
+                            >
+                              {eq.name}
+                            </button>
+                          ) : (
+                            <span>{eq.name}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
