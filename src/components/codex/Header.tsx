@@ -19,7 +19,7 @@ const Header = () => {
         >
           <Icon name="BookMarked" size={26} className="text-gold group-hover:text-gold-bright transition-colors" />
           <span className="font-display text-lg md:text-xl font-bold tracking-wide text-gradient-gold">
-            Кодекс Старого Света
+            Кодекс Мира Легенд
           </span>
         </button>
 

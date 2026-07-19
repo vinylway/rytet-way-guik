@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="max-w-sm">
             <div className="flex items-center gap-3 mb-3">
               <Icon name="BookMarked" size={24} className="text-gold" />
-              <span className="font-display text-lg font-bold text-gradient-gold">Кодекс Старого Света</span>
+              <span className="font-display text-lg font-bold text-gradient-gold">Кодекс Мира Легенд</span>
             </div>
             <p className="font-body text-base text-muted-foreground">
               Неофициальный справочник по настольной ролевой игре Warhammer: The Old World.
@@ -33,7 +33,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gold/15 pt-6">
-          <p className="font-body text-sm text-muted-foreground">© {new Date().getFullYear()} Кодекс Старого Света</p>
+          <p className="font-body text-sm text-muted-foreground">© {new Date().getFullYear()} Кодекс Мира Легенд</p>
           <p className="font-rune text-sm text-gold/60 tracking-wide">Taal protects</p>
         </div>
       </div>

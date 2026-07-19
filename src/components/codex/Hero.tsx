@@ -1,8 +1,6 @@
 import Icon from '@/components/ui/icon';
 import OrnateDivider from './OrnateDivider';
 
-const HERO_IMG = 'https://cdn.poehali.dev/projects/8ea67526-cf7e-472d-ad6c-bad53fcea4bc/files/daa84246-44d4-46ec-b56f-2459e24c5b69.jpg';
-
 interface HeroProps {
   onSearchClick: () => void;
 }
@@ -10,18 +8,12 @@ interface HeroProps {
 const Hero = ({ onSearchClick }: HeroProps) => {
   return (
     <section id="top" className="relative overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-80"
-        style={{ backgroundImage: `url(${HERO_IMG})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/85 to-background" />
-
       <div className="container relative py-24 md:py-36 text-center animate-fade-in">
         <p className="font-rune text-gold/80 tracking-[0.3em] uppercase text-sm mb-6 animate-flicker">
           Warhammer · The Old World · RPG
         </p>
         <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-gradient-gold drop-shadow-[0_2px_20px_rgba(200,153,47,0.25)]">
-          Кодекс<br className="md:hidden" /> Старого Света
+          Кодекс<br className="md:hidden" /> Мира Легенд
         </h1>
         <p className="mx-auto mt-6 max-w-2xl font-body text-lg md:text-2xl text-parchment/85 leading-relaxed">
           Полный справочник для летописцев и искателей приключений: правила, бестиарий,

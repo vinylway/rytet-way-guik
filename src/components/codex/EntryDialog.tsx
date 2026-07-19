@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 import { CodexEntry, sections } from '@/data/codex';
@@ -12,6 +13,11 @@ interface EntryDialogProps {
 const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
   const section = entry ? sections.find((s) => s.id === entry.section) : null;
   const cs = entry?.creatureStats;
+  const [showSummary, setShowSummary] = useState(false);
+
+  useEffect(() => {
+    setShowSummary(false);
+  }, [entry]);
 
   return (
     <Dialog open={!!entry} onOpenChange={onOpenChange}>
@@ -43,9 +49,26 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
 
             <OrnateDivider className="my-5" />
 
-            <p className="font-body text-lg leading-relaxed text-parchment/90">
-              {entry.summary}
-            </p>
+            {cs ? (
+              <div>
+                <button
+                  onClick={() => setShowSummary((v) => !v)}
+                  className="flex w-full items-center justify-center gap-2 rounded border border-gold/30 py-2 font-display text-xs uppercase tracking-widest text-gold hover:bg-secondary transition-colors"
+                >
+                  <Icon name={showSummary ? 'EyeOff' : 'Eye'} size={14} />
+                  {showSummary ? 'Скрыть описание' : 'Показать описание'}
+                </button>
+                {showSummary && (
+                  <p className="mt-3 font-body text-lg leading-relaxed text-parchment/90 animate-fade-in">
+                    {entry.summary}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="font-body text-lg leading-relaxed text-parchment/90">
+                {entry.summary}
+              </p>
+            )}
 
             {entry.stats && entry.stats.length > 0 && (
               <div className="mt-6 overflow-hidden rounded border border-gold/25">
