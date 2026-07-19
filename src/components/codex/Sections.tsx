@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { sections, entries, itemCategories, sources, defaultSourceIds, Source, CodexEntry } from '@/data/codex';
+import { sections, entries, itemCategories, sources, subgroups, defaultSourceIds, Source, SectionId, SourceId, CodexEntry } from '@/data/codex';
 import EntryCard from './EntryCard';
 import OrnateDivider from './OrnateDivider';
 
@@ -8,8 +9,51 @@ interface SectionsProps {
   onSelect: (entry: CodexEntry) => void;
 }
 
-const ItemsGrid = ({ items, onSelect }: { items: CodexEntry[]; onSelect: (e: CodexEntry) => void }) => {
-  if (items.length === 0) {
+const SubgroupBlock = ({ title, items, onSelect }: { title: string; items: CodexEntry[]; onSelect: (e: CodexEntry) => void }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="ornate-frame parchment-panel">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-3 px-4 py-3 text-left"
+      >
+        <Icon name="MapPin" size={16} className="text-gold shrink-0" />
+        <h4 className="flex-1 font-display text-sm uppercase tracking-[0.15em] text-gold/90">{title}</h4>
+        <span className="font-display text-xs text-muted-foreground">{items.length}</span>
+        <Icon name={open ? 'ChevronUp' : 'ChevronDown'} size={16} className="text-gold shrink-0" />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 animate-fade-in">
+          {items.length === 0 ? (
+            <p className="font-body text-muted-foreground text-center py-6">
+              В этом разделе пока нет записей
+            </p>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((entry) => (
+                <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface ItemsGridProps {
+  items: CodexEntry[];
+  onSelect: (e: CodexEntry) => void;
+  sectionId: SectionId;
+  sourceId: SourceId;
+}
+
+const ItemsGrid = ({ items, onSelect, sectionId, sourceId }: ItemsGridProps) => {
+  const groups = subgroups.filter((g) => g.sectionId === sectionId && g.sourceId === sourceId);
+  const ungrouped = items.filter((e) => !e.subgroup);
+
+  if (groups.length === 0 && items.length === 0) {
     return (
       <p className="font-body text-muted-foreground text-center py-10">
         В этом разделе пока нет записей
@@ -17,27 +61,18 @@ const ItemsGrid = ({ items, onSelect }: { items: CodexEntry[]; onSelect: (e: Cod
     );
   }
 
-  const ungrouped = items.filter((e) => !e.subgroup);
-  const groups = Array.from(new Set(items.filter((e) => e.subgroup).map((e) => e.subgroup as string)));
-
   return (
-    <div className="space-y-10">
+    <div className="space-y-4">
       {groups.map((group) => (
-        <div key={group}>
-          <div className="mb-4 flex items-center gap-3">
-            <Icon name="MapPin" size={16} className="text-gold" />
-            <h4 className="font-display text-sm uppercase tracking-[0.15em] text-gold/90">{group}</h4>
-            <span className="h-px flex-1 bg-gold/20" />
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {items.filter((e) => e.subgroup === group).map((entry) => (
-              <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
-            ))}
-          </div>
-        </div>
+        <SubgroupBlock
+          key={group.id}
+          title={group.title}
+          items={items.filter((e) => e.subgroup === group.title)}
+          onSelect={onSelect}
+        />
       ))}
       {ungrouped.length > 0 && (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 pt-2">
           {ungrouped.map((entry) => (
             <EntryCard key={entry.id} entry={entry} onSelect={onSelect} />
           ))}
@@ -111,16 +146,16 @@ const Sections = ({ onSelect }: SectionsProps) => {
                           </TabsList>
 
                           <TabsContent value="all" className="mt-0">
-                            <ItemsGrid items={items} onSelect={onSelect} />
+                            <ItemsGrid items={items} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
                           </TabsContent>
                           {itemCategories.map((cat) => (
                             <TabsContent key={cat.id} value={cat.id} className="mt-0">
-                              <ItemsGrid items={items.filter((e) => e.category === cat.id)} onSelect={onSelect} />
+                              <ItemsGrid items={items.filter((e) => e.category === cat.id)} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
                             </TabsContent>
                           ))}
                         </Tabs>
                       ) : (
-                        <ItemsGrid items={items} onSelect={onSelect} />
+                        <ItemsGrid items={items} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
                       )}
                     </TabsContent>
                   );

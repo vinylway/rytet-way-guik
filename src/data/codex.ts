@@ -53,6 +53,25 @@ export interface CodexEntry {
   creatureStats?: CreatureStatBlock;
 }
 
+export interface Subgroup {
+  id: string;
+  title: string;
+  sectionId: SectionId;
+  sourceId: SourceId;
+}
+
+export const subgroups: Subgroup[] = [
+  { id: 'talabek', title: 'Великое герцогство Талабек', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'bretonnia', title: 'Королевство Бретония', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'osterlund', title: 'Великое графство Остерлунд', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'reikland', title: 'Княжество Рейкланд', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'witches', title: 'Ведьмы и колдуны', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'beastmen', title: 'Ревучие стада зверолюдов', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'orcs-goblins', title: 'Племена орков и гоблинов', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'undead', title: 'Нежить', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'great-forest', title: 'Чудовища Великого леса', sectionId: 'creatures', sourceId: 'gm' },
+];
+
 export type ItemCategoryId = 'melee' | 'throwing' | 'ranged' | 'armor';
 
 export interface ItemCategory {
@@ -119,16 +138,6 @@ export const entries: CodexEntry[] = [
     tags: ['помощь', 'кооперация', 'проверка', 'атака'], meta: 'Глава III',
   },
   {
-    id: 'c1', section: 'creatures', source: 'gm', title: 'Гоблин Ночных Гоблинов',
-    summary: 'Трусливый, но многочисленный обитатель пещер. Боится света, использует ядовитые грибы и фанатиков с шарами на цепях.',
-    tags: ['гоблин', 'орки', 'пещеры', 'яд'], meta: 'Угроза: низкая',
-  },
-  {
-    id: 'c2', section: 'creatures', source: 'gm', title: 'Имперский Грифон',
-    summary: 'Гордый хищник Серых гор, символ Рейкланда. Приручается рыцарями, обладает мощной атакой когтями и клювом.',
-    tags: ['грифон', 'империя', 'горы', 'ездовое'], meta: 'Угроза: высокая',
-  },
-  {
     id: 'c5', section: 'creatures', source: 'gm', title: 'Имперский крестьянин', subgroup: 'Великое герцогство Талабек',
     summary: 'Простой землепашец Талабека, привыкший постоять за свой дом. В одиночку слаб, но в толпе с факелами и вилами способен смять даже опытного бойца численным превосходством.',
     tags: ['крестьянин', 'талабек', 'империя', 'прислужник'], meta: 'Угроза: низкая',
@@ -160,16 +169,6 @@ export const entries: CodexEntry[] = [
         },
       ],
     },
-  },
-  {
-    id: 'c3', section: 'creatures', source: 'trinity', title: 'Вампир из рода фон Карштайн',
-    summary: 'Аристократ нежити, повелевающий ветром Шиш. Регенерирует раны, гипнотизирует жертв и поднимает армии скелетов.',
-    tags: ['вампир', 'нежить', 'карштайн', 'магия смерти'], meta: 'Угроза: смертельная',
-  },
-  {
-    id: 'c4', section: 'creatures', source: 'talagaad-guide', title: 'Древень Атель Лорена',
-    summary: 'Древний живой лес-хранитель. Медлителен, но невероятно вынослив; сокрушает врагов ветвями и топит корнями.',
-    tags: ['древень', 'лесные эльфы', 'атель лорен', 'дерево'], meta: 'Угроза: высокая',
   },
   {
     id: 'i1', section: 'items', source: 'player', title: 'Рунический молот гномов', category: 'melee',
