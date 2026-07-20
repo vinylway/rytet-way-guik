@@ -14,6 +14,9 @@ export interface GeneratedCharacter {
   stats: StatRow[];
   experience: number;
   createdAt: number;
+  talentIds?: string[];
+  boostedSkillIds?: string[];
+  loreId?: string;
 }
 
 interface OriginRollRange {
@@ -53,6 +56,36 @@ export const characteristicModifierTable: Record<number, string> = {
 };
 
 export const rollD10 = (): number => Math.floor(Math.random() * 10) + 1;
+
+// Таблица «Возможности происхождения» для бретонца (d10)
+export const bretonTalentTable: Record<number, string> = {
+  1: 'talent-breton-allies-in-arms',
+  2: 'talent-breton-defensive-stance',
+  3: 'talent-breton-golden-voice',
+  4: 'talent-breton-strong-build',
+  5: 'talent-breton-resistance-to-corruption',
+  6: 'talent-breton-secret-heritage',
+  7: 'talent-breton-iron-stomach',
+  8: 'talent-breton-helmsman',
+  9: 'talent-breton-vanguard',
+  10: 'talent-breton-furious-charge',
+};
+
+export const bretonOathTalentId = 'talent-breton-oath-of-honour';
+
+// Навыки, которые бретонец обязан поднять до 3 (плюс ещё любые два на выбор игрока)
+export const bretonMandatoryBoostedSkillIds = ['skill-melee', 'skill-labour'];
+
+// Варианты знания от происхождения для бретонца: «Высший свет и королевство Бретония» или «Фермерство»
+export const bretonLoreChoiceIds = ['lore-high-society', 'lore-farming'];
+
+export const bretonNames: string[] = [
+  'Жиль', 'Жак', 'Перрен', 'Марсель', 'Рауль', 'Этьен', 'Анри', 'Бертран', 'Одо', 'Томен',
+  'Моник', 'Изабо', 'Томасс', 'Перрет', 'Жизель', 'Женевьев', 'Марго', 'Симона', 'Жюльот', 'Беатрис',
+];
+
+export const getRandomBretonName = (): string =>
+  bretonNames[Math.floor(Math.random() * bretonNames.length)];
 
 const STORAGE_KEY = 'codex-generated-characters';
 
