@@ -4,7 +4,7 @@ import Icon from '@/components/ui/icon';
 import Header from '@/components/codex/Header';
 import Footer from '@/components/codex/Footer';
 import OrnateDivider from '@/components/codex/OrnateDivider';
-import { entries } from '@/data/codex';
+import { entries, CodexEntry } from '@/data/codex';
 import {
   rollD10,
   getOriginIdByRoll,
@@ -19,6 +19,7 @@ import {
   bretonMandatoryBoostedSkillIds,
   bretonLoreChoiceIds,
   getRandomBretonName,
+  characteristicAbilityEntryId,
 } from '@/data/generator';
 
 const ALL_LABELS = ['ББ', 'ДБ', 'С', 'В', 'И', 'Пр', 'Р', 'Х', 'Судьба'];
@@ -225,6 +226,18 @@ const CharacterGenerator = () => {
           return { label: s.label, base, boosted, final: base + (boosted ? 1 : 0) };
         })
       : null;
+
+  const fateStat = finalStats?.find((s) => s.label === 'Судьба') ?? null;
+  const characteristicStats = finalStats?.filter((s) => s.label !== 'Судьба') ?? [];
+  const boostedSkillIds = [...bretonMandatoryBoostedSkillIds, ...selectedExtraSkills];
+
+  const getRelatedSkills = (abilityId: string): CodexEntry[] => {
+    const ability = entries.find((e) => e.id === abilityId);
+    if (!ability?.relatedEntryIds) return [];
+    return ability.relatedEntryIds
+      .map((id) => entries.find((e) => e.id === id))
+      .filter((e): e is CodexEntry => !!e && e.subgroup === 'Навыки');
+  };
 
   const reset = () => {
     setOriginRoll(null);
@@ -667,22 +680,49 @@ const CharacterGenerator = () => {
                 </h2>
               </div>
 
-              <div className="overflow-hidden rounded border border-gold/25 mb-5">
-                <table className="w-full font-body text-base">
-                  <tbody>
-                    {finalStats.map((s, i) => (
-                      <tr key={s.label} className={i % 2 === 0 ? 'bg-secondary/40' : ''}>
-                        <td className="px-4 py-2 font-display text-xs uppercase tracking-wide text-gold/80 whitespace-nowrap">
-                          {s.label}
-                        </td>
-                        <td className="px-4 py-2 text-parchment/90">
-                          {s.final}
-                          {s.boosted && <span className="ml-2 text-gold-bright text-sm">({s.base} +1)</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {fateStat && (
+                <div className="mb-4 flex justify-center">
+                  <div className="w-full sm:w-48 rounded border border-gold bg-secondary/50 py-3 text-center">
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1">{fateStat.label}</p>
+                    <p className="font-display text-2xl font-bold text-gold-bright">
+                      {fateStat.final}
+                      {fateStat.boosted && <span className="ml-2 text-gold-bright text-sm align-middle">({fateStat.base} +1)</span>}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                {characteristicStats.map((s) => {
+                  const abilityId = characteristicAbilityEntryId[s.label];
+                  const relatedSkills = abilityId ? getRelatedSkills(abilityId) : [];
+                  return (
+                    <div key={s.label} className="rounded border border-gold/25 bg-secondary/20 p-3">
+                      <p className="font-display text-xs uppercase tracking-wide text-gold/80 mb-1">{s.label}</p>
+                      <p className="font-display text-xl font-bold text-parchment">
+                        {s.final}
+                        {s.boosted && <span className="ml-1.5 text-gold-bright text-xs">({s.base} +1)</span>}
+                      </p>
+                      {relatedSkills.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-gold/15 space-y-1">
+                          {relatedSkills.map((skill) => {
+                            const boosted = isBreton && boostedSkillIds.includes(skill.id);
+                            return (
+                              <p key={skill.id} className="font-body text-xs text-parchment/75 leading-snug">
+                                {skill.title}
+                                {isBreton && (
+                                  <span className={boosted ? 'text-gold-bright font-semibold' : 'text-parchment/50'}>
+                                    {' '}{boosted ? 3 : 2}
+                                  </span>
+                                )}
+                              </p>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               {isBreton && (
@@ -700,16 +740,6 @@ const CharacterGenerator = () => {
                       </p>
                     </div>
                   )}
-                  <div className="rounded border border-gold/20 p-3">
-                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">
-                      Навыки, повышенные до 3
-                    </p>
-                    <p className="font-body text-parchment/90">
-                      {[...bretonMandatorySkillEntries.map((s) => s.title), ...selectedExtraSkills.map((id) => entries.find((e) => e.id === id)?.title)]
-                        .filter(Boolean)
-                        .join(', ')}
-                    </p>
-                  </div>
                   {selectedLoreId && (
                     <div className="rounded border border-gold/20 p-3">
                       <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-1.5">

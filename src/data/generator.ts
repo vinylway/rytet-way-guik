@@ -57,6 +57,18 @@ export const characteristicModifierTable: Record<number, string> = {
 
 export const rollD10 = (): number => Math.floor(Math.random() * 10) + 1;
 
+// Соответствие короткой метки характеристики (как в StatRow) её карточке в разделе «Способности»
+export const characteristicAbilityEntryId: Record<string, string> = {
+  'ББ': 'ability-bb',
+  'ДБ': 'ability-db',
+  'С': 'ability-s',
+  'В': 'ability-v',
+  'И': 'ability-i',
+  'Пр': 'ability-pr',
+  'Р': 'ability-r',
+  'Х': 'ability-h',
+};
+
 // Таблица «Возможности происхождения» для бретонца (d10)
 export const bretonTalentTable: Record<number, string> = {
   1: 'talent-breton-allies-in-arms',
@@ -76,8 +88,8 @@ export const bretonOathTalentId = 'talent-breton-oath-of-honour';
 // Навыки, которые бретонец обязан поднять до 3 (плюс ещё любые два на выбор игрока)
 export const bretonMandatoryBoostedSkillIds = ['skill-melee', 'skill-labour'];
 
-// Варианты знания от происхождения для бретонца: «Высший свет и королевство Бретония» или «Фермерство»
-export const bretonLoreChoiceIds = ['lore-high-society', 'lore-farming'];
+// Варианты знания от происхождения для бретонца: «Королевство Бретония», «Высший свет» или «Фермерство»
+export const bretonLoreChoiceIds = ['lore-bretonnia', 'lore-high-society', 'lore-farming'];
 
 export const bretonNames: string[] = [
   'Жиль', 'Жак', 'Перрен', 'Марсель', 'Рауль', 'Этьен', 'Анри', 'Бертран', 'Одо', 'Томен',

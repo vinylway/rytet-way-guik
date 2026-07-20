@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import Icon from '@/components/ui/icon';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { sections, sectionGroups, entries, itemCategories, sources, subgroups, defaultSourceIds, Source, Section, SectionId, SourceId, CodexEntry } from '@/data/codex';
@@ -9,7 +9,17 @@ interface SectionsProps {
   onSelect: (entry: CodexEntry) => void;
 }
 
-const SubgroupBlock = ({ title, items, onSelect }: { title: string; items: CodexEntry[]; onSelect: (e: CodexEntry) => void }) => {
+const SubgroupBlock = ({
+  title,
+  items,
+  onSelect,
+  children,
+}: {
+  title: string;
+  items: CodexEntry[];
+  onSelect: (e: CodexEntry) => void;
+  children?: ReactNode;
+}) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -25,7 +35,9 @@ const SubgroupBlock = ({ title, items, onSelect }: { title: string; items: Codex
       </button>
       {open && (
         <div className="px-4 pb-4 animate-fade-in">
-          {items.length === 0 ? (
+          {children ? (
+            <div className="space-y-3">{children}</div>
+          ) : items.length === 0 ? (
             <p className="font-body text-muted-foreground text-center py-6">
               В этом разделе пока нет записей
             </p>
@@ -50,7 +62,8 @@ interface ItemsGridProps {
 }
 
 const ItemsGrid = ({ items, onSelect, sectionId, sourceId }: ItemsGridProps) => {
-  const groups = subgroups.filter((g) => g.sectionId === sectionId && g.sourceId === sourceId);
+  const allGroups = subgroups.filter((g) => g.sectionId === sectionId && g.sourceId === sourceId);
+  const groups = allGroups.filter((g) => !g.parentId);
   const ungrouped = items.filter((e) => !e.subgroup);
 
   if (groups.length === 0 && items.length === 0) {
@@ -63,14 +76,27 @@ const ItemsGrid = ({ items, onSelect, sectionId, sourceId }: ItemsGridProps) => 
 
   return (
     <div className="space-y-4">
-      {groups.map((group) => (
-        <SubgroupBlock
-          key={group.id}
-          title={group.title}
-          items={items.filter((e) => e.subgroup === group.title)}
-          onSelect={onSelect}
-        />
-      ))}
+      {groups.map((group) => {
+        const childGroups = allGroups.filter((g) => g.parentId === group.id);
+        const groupItems = childGroups.length > 0
+          ? items.filter((e) => childGroups.some((c) => c.title === e.subgroup))
+          : items.filter((e) => e.subgroup === group.title);
+
+        return (
+          <SubgroupBlock key={group.id} title={group.title} items={groupItems} onSelect={onSelect}>
+            {childGroups.length > 0
+              ? childGroups.map((child) => (
+                  <SubgroupBlock
+                    key={child.id}
+                    title={child.title}
+                    items={items.filter((e) => e.subgroup === child.title)}
+                    onSelect={onSelect}
+                  />
+                ))
+              : undefined}
+          </SubgroupBlock>
+        );
+      })}
       {ungrouped.length > 0 && (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 pt-2">
           {ungrouped.map((entry) => (
