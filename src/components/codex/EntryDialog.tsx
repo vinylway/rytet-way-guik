@@ -97,6 +97,26 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate }: EntryDialogProps) => {
               </div>
             )}
 
+            {entry.callouts && entry.callouts.length > 0 && (
+              <div className="mt-5 space-y-3">
+                {entry.callouts.map((callout, i) => (
+                  <div key={i} className="rounded border border-gold/25 bg-secondary/30 p-4">
+                    <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2">
+                      {callout.title}
+                    </p>
+                    <ul className="space-y-1.5">
+                      {callout.items.map((item, j) => (
+                        <li key={j} className="flex items-start gap-2 font-body text-parchment/90 leading-snug">
+                          <Icon name="Dot" size={18} className="text-gold shrink-0 mt-0.5" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {entry.relatedEntryIds && entry.relatedEntryIds.length > 0 && (
               <div className="mt-4">
                 <p className="font-display text-xs uppercase tracking-widest text-gold/80 mb-2 text-center">
