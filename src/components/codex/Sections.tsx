@@ -82,17 +82,21 @@ const ItemsGrid = ({ items, onSelect, sectionId, sourceId }: ItemsGridProps) => 
           ? items.filter((e) => childGroups.some((c) => c.title === e.subgroup))
           : items.filter((e) => e.subgroup === group.title);
 
+        if (groupItems.length === 0) return null;
+
         return (
           <SubgroupBlock key={group.id} title={group.title} items={groupItems} onSelect={onSelect}>
             {childGroups.length > 0
-              ? childGroups.map((child) => (
-                  <SubgroupBlock
-                    key={child.id}
-                    title={child.title}
-                    items={items.filter((e) => e.subgroup === child.title)}
-                    onSelect={onSelect}
-                  />
-                ))
+              ? childGroups
+                  .filter((child) => items.some((e) => e.subgroup === child.title))
+                  .map((child) => (
+                    <SubgroupBlock
+                      key={child.id}
+                      title={child.title}
+                      items={items.filter((e) => e.subgroup === child.title)}
+                      onSelect={onSelect}
+                    />
+                  ))
               : undefined}
           </SubgroupBlock>
         );
@@ -141,38 +145,38 @@ const SectionBlock = ({
 
       {open && (
         <div className="px-5 pb-6 animate-fade-in">
-          <Tabs defaultValue={sectionSources[0]?.id}>
-            <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/60 border border-gold/20">
-              {sectionSources.map((src) => (
-                <TabsTrigger
-                  key={src.id}
-                  value={src.id}
-                  className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground"
-                >
-                  <Icon name={src.icon} size={14} fallback="Circle" />
-                  {src.title}
+          {section.id === 'items' ? (
+            <Tabs defaultValue="equipment">
+              <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/60 border border-gold/20">
+                <TabsTrigger value="equipment" className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground">
+                  <Icon name="Backpack" size={14} />
+                  Имущество
                 </TabsTrigger>
-              ))}
-            </TabsList>
+                <TabsTrigger value="assets" className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground">
+                  <Icon name="Building2" size={14} />
+                  Активы
+                </TabsTrigger>
+              </TabsList>
 
-            {sectionSources.map((src: Source) => {
-              const items = sectionEntries.filter((e) => e.source === src.id);
-              return (
-                <TabsContent key={src.id} value={src.id} className="mt-0">
-                  {section.id === 'items' ? (
-                    <Tabs defaultValue="equipment">
-                      <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/40 border border-gold/15">
-                        <TabsTrigger value="equipment" className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground">
-                          <Icon name="Backpack" size={14} />
-                          Имущество
-                        </TabsTrigger>
-                        <TabsTrigger value="assets" className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground">
-                          <Icon name="Building2" size={14} />
-                          Активы
-                        </TabsTrigger>
-                      </TabsList>
+              <TabsContent value="equipment" className="mt-0">
+                <Tabs defaultValue={sectionSources[0]?.id}>
+                  <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/40 border border-gold/15">
+                    {sectionSources.map((src) => (
+                      <TabsTrigger
+                        key={src.id}
+                        value={src.id}
+                        className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground"
+                      >
+                        <Icon name={src.icon} size={14} fallback="Circle" />
+                        {src.title}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
 
-                      <TabsContent value="equipment" className="mt-0">
+                  {sectionSources.map((src: Source) => {
+                    const items = sectionEntries.filter((e) => e.source === src.id && e.category !== 'assets');
+                    return (
+                      <TabsContent key={src.id} value={src.id} className="mt-0">
                         <Tabs defaultValue="all">
                           <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/40 border border-gold/15">
                             <TabsTrigger value="all" className="font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground">
@@ -191,7 +195,7 @@ const SectionBlock = ({
                           </TabsList>
 
                           <TabsContent value="all" className="mt-0">
-                            <ItemsGrid items={items.filter((e) => e.category !== 'assets')} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
+                            <ItemsGrid items={items} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
                           </TabsContent>
                           {itemCategories.map((cat) => (
                             <TabsContent key={cat.id} value={cat.id} className="mt-0">
@@ -200,18 +204,62 @@ const SectionBlock = ({
                           ))}
                         </Tabs>
                       </TabsContent>
+                    );
+                  })}
+                </Tabs>
+              </TabsContent>
 
-                      <TabsContent value="assets" className="mt-0">
-                        <ItemsGrid items={items.filter((e) => e.category === 'assets')} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
+              <TabsContent value="assets" className="mt-0">
+                <Tabs defaultValue={sectionSources[0]?.id}>
+                  <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/40 border border-gold/15">
+                    {sectionSources.map((src) => (
+                      <TabsTrigger
+                        key={src.id}
+                        value={src.id}
+                        className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground"
+                      >
+                        <Icon name={src.icon} size={14} fallback="Circle" />
+                        {src.title}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+
+                  {sectionSources.map((src: Source) => {
+                    const items = sectionEntries.filter((e) => e.source === src.id && e.category === 'assets');
+                    return (
+                      <TabsContent key={src.id} value={src.id} className="mt-0">
+                        <ItemsGrid items={items} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
                       </TabsContent>
-                    </Tabs>
-                  ) : (
+                    );
+                  })}
+                </Tabs>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <Tabs defaultValue={sectionSources[0]?.id}>
+              <TabsList className="mb-6 flex-wrap h-auto gap-1 bg-secondary/60 border border-gold/20">
+                {sectionSources.map((src) => (
+                  <TabsTrigger
+                    key={src.id}
+                    value={src.id}
+                    className="flex items-center gap-1.5 font-display text-xs uppercase tracking-wide data-[state=active]:bg-gold data-[state=active]:text-primary-foreground"
+                  >
+                    <Icon name={src.icon} size={14} fallback="Circle" />
+                    {src.title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {sectionSources.map((src: Source) => {
+                const items = sectionEntries.filter((e) => e.source === src.id);
+                return (
+                  <TabsContent key={src.id} value={src.id} className="mt-0">
                     <ItemsGrid items={items} onSelect={onSelect} sectionId={section.id} sourceId={src.id} />
-                  )}
-                </TabsContent>
-              );
-            })}
-          </Tabs>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+          )}
         </div>
       )}
     </section>
