@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
-import { CodexEntry, StatRowValue, StatLink, sections, entries, SectionId } from '@/data/codex';
+import { CodexEntry, StatLink, sections, entries, SectionId } from '@/data/codex';
 import OrnateDivider from './OrnateDivider';
 
 interface EntryDialogProps {
@@ -11,22 +11,24 @@ interface EntryDialogProps {
   onOpenSection?: (sectionId: SectionId) => void;
 }
 
-const StatValueWithLinks = ({
-  stat,
+const TextWithLinks = ({
+  text,
+  links,
   onNavigate,
   onOpenSection,
 }: {
-  stat: StatRowValue;
+  text: string;
+  links?: StatLink[];
   onNavigate?: (id: string) => void;
   onOpenSection?: (sectionId: SectionId) => void;
 }) => {
-  if (!stat.links || stat.links.length === 0 || (!onNavigate && !onOpenSection)) {
-    return <>{stat.value}</>;
+  if (!links || links.length === 0 || (!onNavigate && !onOpenSection)) {
+    return <>{text}</>;
   }
 
-  const sortedLinks = [...stat.links].sort((a, b) => b.match.length - a.match.length);
+  const sortedLinks = [...links].sort((a, b) => b.match.length - a.match.length);
   const parts: { text: string; link?: StatLink }[] = [];
-  let remaining = stat.value;
+  const remaining = text;
   let cursor = 0;
 
   while (cursor < remaining.length) {
@@ -124,7 +126,7 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate, onOpenSection }: EntryDi
                   <div className="mt-3 space-y-3 animate-fade-in">
                     {entry.summary.split('\n\n').map((paragraph, i) => (
                       <p key={i} className="font-body text-lg leading-relaxed text-parchment/90">
-                        {paragraph}
+                        <TextWithLinks text={paragraph} links={entry.summaryLinks} onNavigate={onNavigate} onOpenSection={onOpenSection} />
                       </p>
                     ))}
                   </div>
@@ -134,7 +136,7 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate, onOpenSection }: EntryDi
               <div className="space-y-3">
                 {entry.summary.split('\n\n').map((paragraph, i) => (
                   <p key={i} className="font-body text-lg leading-relaxed text-parchment/90">
-                    {paragraph}
+                    <TextWithLinks text={paragraph} links={entry.summaryLinks} onNavigate={onNavigate} onOpenSection={onOpenSection} />
                   </p>
                 ))}
               </div>
@@ -150,7 +152,7 @@ const EntryDialog = ({ entry, onOpenChange, onNavigate, onOpenSection }: EntryDi
                           {s.label}
                         </td>
                         <td className="px-4 py-2 text-parchment/90">
-                          <StatValueWithLinks stat={s} onNavigate={onNavigate} onOpenSection={onOpenSection} />
+                          <TextWithLinks text={s.value} links={s.links} onNavigate={onNavigate} onOpenSection={onOpenSection} />
                         </td>
                       </tr>
                     ))}

@@ -87,6 +87,8 @@ export interface CodexEntry {
   otherOpinions?: OpinionQuote[];
   relatedEntryIds?: string[];
   callouts?: Callout[];
+  // Ссылки на подстроки внутри текста summary (аналогично links в StatRowValue)
+  summaryLinks?: StatLink[];
 }
 
 export interface Subgroup {
@@ -604,8 +606,13 @@ export const entries: CodexEntry[] = [
   },
   {
     id: 'talent-breton-allies-in-arms', section: 'abilities', source: 'player', title: 'Союзники по оружию', subgroup: 'Таланты',
-    summary: 'Персонаж привык сражаться плечом к плечу с товарищами по оружию — будь то рыцари, оруженосцы или простое ополчение. Пока рядом сражается союзник, персонаж получает льготу к проверкам, связанным с совместным боем.',
-    tags: ['талант'], meta: 'Талант',
+    summary: 'Взаимная поддержка позволяет вам справиться с опасностями, которые были бы непреодолимы в одиночку. При оказании помощи союзнику кто‑либо из вас может устранить состояние ошеломлён.',
+    summaryLinks: [{ match: 'помощи', entryId: 'r5' }],
+    tags: ['талант', 'помощь'], meta: 'Талант',
+    stats: [
+      { label: 'Цена', value: '3 ПО' },
+      { label: 'Требования', value: 'Харизма 4+', links: [{ match: 'Харизма', entryId: 'ability-h' }] },
+    ],
   },
   {
     id: 'talent-breton-defensive-stance', section: 'abilities', source: 'player', title: 'Оборонительная стойка', subgroup: 'Таланты',
