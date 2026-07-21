@@ -117,6 +117,7 @@ export const subgroups: Subgroup[] = [
   { id: 'asset-magic-items', title: 'Магические предметы', sectionId: 'items', sourceId: 'player' },
   { id: 'asset-other', title: 'Остальные активы', sectionId: 'items', sourceId: 'player' },
   { id: 'talabek', title: 'Великое герцогство Талабек', sectionId: 'creatures', sourceId: 'gm' },
+  { id: 'gnomogryz', title: 'Огры и полурослики', sectionId: 'creatures', sourceId: 'gm' },
   { id: 'bretonnia', title: 'Королевство Бретония', sectionId: 'creatures', sourceId: 'gm' },
   { id: 'osterlund', title: 'Великое графство Остерлунд', sectionId: 'creatures', sourceId: 'gm' },
   { id: 'reikland', title: 'Княжество Рейкланд', sectionId: 'creatures', sourceId: 'gm' },
