@@ -83,6 +83,20 @@ export const bretonTalentTable: Record<number, string> = {
   10: 'talent-breton-furious-charge',
 };
 
+// Таблица «Возможности происхождения» для гнома (d10)
+export const bretonTalentTable: Record<number, string> = {
+  1: 'talent-breton-allies-in-arms',
+  2: 'talent-breton-defensive-stance',
+  3: 'talent-breton-golden-voice',
+  4: 'talent-breton-strong-build',
+  5: 'talent-breton-resistance-to-corruption',
+  6: 'talent-breton-secret-heritage',
+  7: 'talent-breton-iron-stomach',
+  8: 'talent-breton-helmsman',
+  9: 'talent-breton-vanguard',
+  10: 'talent-breton-furious-charge',
+};
+
 export const bretonOathTalentId = 'talent-breton-oath-of-honour';
 
 // Навыки, которые бретонец обязан поднять до 3 (плюс ещё любые два на выбор игрока)
